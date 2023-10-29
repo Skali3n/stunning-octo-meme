@@ -5,12 +5,12 @@ function authGuard(req, res, next) {
   const token = req.headers.authorization;
 
   if (!token) {
-    return res.status(403).json({ error: 'Отсутствует токен' });
+    return res.status(403).json({ error: 'Token missing' });
   }
 
   jwt.verify(token, secretKey, (err, decoded) => {
     if (err) {
-      return res.status(401).json({ error: 'Неверный токен' });
+      return res.status(401).json({ error: 'Invalid token' });
     }
 
     req.user = decoded; 
