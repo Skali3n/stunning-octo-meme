@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const secretKey = 'your-secret-key'; // Замените на свой секретный ключ
+const secretKey = 'HS256'; 
 
 function authGuard(req, res, next) {
   const token = req.headers.authorization;
