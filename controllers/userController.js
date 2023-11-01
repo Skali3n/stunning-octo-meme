@@ -2,12 +2,26 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { validateUserData } = require('../middleware/validation');
+const validation = require('../middleware/validation');
 const { readUsers, saveUsers } = require('../services/userService');
+const fs = require('fs');
 
-const secretKey = 'HS256'; 
+const secretKey = 'HS256';
 
-router.post('/register', validateUserData, (req, res) => {
+const getUsers = () => {
+  const data = fs.readFileSync('users.json', 'utf-8');
+  return JSON.parse(data);
+};
+
+const createUser = (user) => {
+  const users = getUsers();
+  user.id = users.length + 1;
+  users.push(user);
+  fs.writeFileSync('users.json', JSON.stringify(users), 'utf-8');
+  return user;
+};
+
+router.post('/register', validation.validateUserData, (req, res) => {
   const { email, password, firstName, lastName } = req.body;
   const users = readUsers();
 
@@ -36,7 +50,7 @@ router.post('/register', validateUserData, (req, res) => {
   });
 });
 
-router.post('/login', (req, res) => {
+router.post('/login', validation.validateEmail, validation.validatePassword, (req, res) => {
   const { email, password } = req.body;
   const users = readUsers();
 
@@ -51,9 +65,9 @@ router.post('/login', (req, res) => {
       return res.status(401).json({ error: 'Wrong password' });
     }
 
-    const token = jwt.sign({ email: user.email }, secretKey, { expiresIn: '1h' });
+    const token = jwt.sign({ email: user.email }, 'HS256', { expiresIn: '1h' });
 
-    res.status(200).json({ token });
+    res.status(200).json({id: user.id, email: user.email, token });
   });
 });
 
