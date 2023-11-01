@@ -25,7 +25,7 @@ router.post('/register', validation.validateUserData, (req, res) => {
   const { email, password, firstName, lastName } = req.body;
   const users = readUsers();
 
-    const existingUser = users.find((user) => user.email === email);
+  const existingUser = users.find((user) => user.email === email);
   if (existingUser) {
     return res.status(400).json({ error: 'User with this email already exists' });
   }

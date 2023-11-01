@@ -31,7 +31,7 @@ const initializeData = () => {
 initializeData();
 
 app.use(bodyParser.json());
-app.use('/users', userController);
+app.use('/createUser', userController);
 app.get('/users/me', authGuard, (req, res) => {
   res.status(200).json({ message: `Hello, ${user.firstName} ${user.lastName}`});
 });
